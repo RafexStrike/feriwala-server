@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
-import apiRouter from './routes';
+import v1Router from './routes/v1';
 import { CORS_ORIGINS, ENV } from './config/environment';
 import { httpLogger } from './config/logger';
 import { errorHandler, notFound } from './middleware/errorHandler';
@@ -45,7 +45,7 @@ app.all('/api/auth/*', async (req, res) => {
   res.status(response.status).send(response.body);
 });
 
-app.use('/api', apiRouter);
+app.use('/api/v1', v1Router);
 app.use(notFound);
 app.use(errorHandler);
 
