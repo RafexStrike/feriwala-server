@@ -33,7 +33,7 @@ app.get('/health', (_req, res) => {
   res.json({ success: true, message: 'OK' });
 });
 
-app.all('/api/auth/*', async (req, res) => {
+app.all(/\/api\/auth\/.*/, async (req, res) => {
   // Better Auth's handler expects a standard Web Request object
   const webReq = new Request(`http://${req.headers.host}${req.url}`, {
     method: req.method,
