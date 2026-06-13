@@ -22,7 +22,14 @@ export const errorHandler = (error: unknown, _req: Request, res: Response, _next
     apiError = new ApiError(500, 'Internal server error', error);
   }
 
-  logger.error({ error }, apiError.message);
+  const safeError = (err: unknown) => {
+    if (err instanceof Error) {
+      return { message: err.message, stack: err.stack };
+    }
+    return err;
+  };
+
+  logger.error({ error: safeError(error) }, apiError.message);
   res.status(apiError.statusCode).json({
     success: false,
     message: apiError.message,

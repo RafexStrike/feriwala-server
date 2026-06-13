@@ -42,7 +42,13 @@ app.all(/\/api\/auth\/.*/, async (req, res) => {
   });
 
   const response = await auth.handler(webReq);
-  res.status(response.status).send(response.body);
+  
+  response.headers.forEach((value, key) => {
+    res.setHeader(key, value);
+  });
+
+  const body = await response.text();
+  res.status(response.status).send(body);
 });
 
 app.use('/api/v1', v1Router);

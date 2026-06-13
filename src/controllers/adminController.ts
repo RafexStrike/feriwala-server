@@ -71,7 +71,7 @@ export const createNotificationEmail = asyncHandler(async (req: Request, res: Re
     email,
     isActive: isActive ?? true,
     notificationTypes: notificationTypes ?? ['order-status'],
-    createdBy: req.user!._id
+    createdBy: req.user!.id
   });
 
   res.status(201).json({ success: true, data: recipient });

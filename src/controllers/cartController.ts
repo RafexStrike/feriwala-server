@@ -15,7 +15,7 @@ const getOrCreateCart = async (userId: Types.ObjectId): Promise<CartDocument> =>
 };
 
 export const viewCart = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const cart = await getOrCreateCart(req.user!._id);
+  const cart = await getOrCreateCart(new Types.ObjectId(req.user!.id));
   await cart.populate('items.product');
   res.json({ success: true, data: cart });
 });
@@ -30,7 +30,7 @@ export const addToCart = asyncHandler(async (req: Request, res: Response): Promi
     throw new ApiError(400, 'Not enough stock available');
   }
 
-  const cart = await getOrCreateCart(req.user!._id);
+  const cart = await getOrCreateCart(new Types.ObjectId(req.user!.id));
   const existingItem = cart.items.find((item) => item.product.toString() === productId);
   if (existingItem) {
     existingItem.quantity += quantity;
@@ -50,7 +50,7 @@ export const addToCart = asyncHandler(async (req: Request, res: Response): Promi
 
 export const updateCartItem = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { quantity } = req.body as { quantity: number };
-  const cart = await getOrCreateCart(req.user!._id);
+  const cart = await getOrCreateCart(new Types.ObjectId(req.user!.id));
   const item = cart.items.find((entry) => entry.product.toString() === req.params.productId);
   if (!item) {
     throw new ApiError(404, 'Cart item not found');
@@ -62,7 +62,7 @@ export const updateCartItem = asyncHandler(async (req: Request, res: Response): 
 });
 
 export const removeCartItem = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const cart = await getOrCreateCart(req.user!._id);
+  const cart = await getOrCreateCart(new Types.ObjectId(req.user!.id));
   cart.items = cart.items.filter((item) => item.product.toString() !== req.params.productId);
   await cart.save();
   await cart.populate('items.product');
@@ -70,7 +70,7 @@ export const removeCartItem = asyncHandler(async (req: Request, res: Response): 
 });
 
 export const clearCart = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const cart = await getOrCreateCart(req.user!._id);
+  const cart = await getOrCreateCart(new Types.ObjectId(req.user!.id));
   cart.items = [];
   await cart.save();
   res.json({ success: true, message: 'Cart cleared successfully' });

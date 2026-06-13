@@ -21,7 +21,7 @@ export const createReview = asyncHandler(async (req: Request, res: Response): Pr
   }
 
   const review = await ReviewModel.findOneAndUpdate(
-    { product: product._id, user: req.user!._id },
+    { product: product._id, user: req.user!.id },
     { rating, comment },
     { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
   );
@@ -31,7 +31,7 @@ export const createReview = asyncHandler(async (req: Request, res: Response): Pr
 });
 
 export const deleteReview = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const review = await ReviewModel.findOneAndDelete({ product: req.params.productId, user: req.user!._id });
+  const review = await ReviewModel.findOneAndDelete({ product: req.params.productId, user: req.user!.id });
   if (!review) {
     throw new ApiError(404, 'Review not found');
   }
