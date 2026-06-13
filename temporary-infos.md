@@ -42,3 +42,21 @@ Setup and Usage
 npm run admin:add
 (Alternatively: npm run admin:add -- --email admin@example.com --password yourpassword)
 4. Run the server: npm run dev
+
+
+
+
+//
+The admin authentication process follows this flow:
+1. Admin Creation (Seeding)
+Admins are created via a standalone script (src/scripts/addAdmin.ts):
+- User Creation: It calls auth.api.signUpEmail to create a user record with a password.
+- Privilege Escalation: It manually updates the MongoDB user collection to set role: 'admin' and emailVerified: true for that email.
+2. Login Process
+- Authentication: The system uses Better Auth (src/lib/auth.ts). The admin logs in using a standard email/password flow.
+- Verification: Better Auth's MongoDB adapter matches the credentials against the database. If they match, a session is created.
+3. Access Control (Middleware)
+Every request to an admin endpoint is filtered through middleware in src/middleware/auth.ts:
+- Session Validation: requireAuth verifies the session via auth.api.getSession.
+- Role Verification: requireAdmin checks if the authenticated user's role is exactly 'admin'. If not, it returns a 403 Administrator access required error.
+- Verification Bypass: In requireVerifiedUser, admins are explicitly allowed to bypass email verification checks.
