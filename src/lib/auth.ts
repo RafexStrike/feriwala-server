@@ -7,6 +7,7 @@ import { sendEmail } from "../services/emailService";
 const client = new MongoClient(ENV.MONGODB_URI);
 
 export const auth = betterAuth({
+    baseURL: ENV.BETTER_AUTH_URL,
     database: mongodbAdapter(client.db()),
     emailAndPassword: {
         enabled: true,
@@ -36,4 +37,10 @@ export const auth = betterAuth({
         },
     },
     trustedOrigins: [ENV.CLIENT_FRONTEND_URL, ENV.ADMIN_FRONTEND_URL],
+    advanced: {
+        defaultCookieAttributes: ENV.NODE_ENV === 'production'
+            ? { sameSite: 'None', secure: true }
+            : { sameSite: 'Lax' },
+        useSecureCookies: ENV.NODE_ENV === 'production',
+    },
 });
