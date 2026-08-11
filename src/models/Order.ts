@@ -58,7 +58,7 @@ const OrderSchema = new Schema<IOrder>(
     status: { type: String, enum: ['pending', 'completed', 'canceled'], default: 'pending' },
     subtotal: { type: Number, required: true, min: 0 },
     total: { type: Number, required: true, min: 0 },
-    profit: { type: Number, required: true, min: 0 },
+    profit: { type: Number, required: true },
     shippingAddress: { type: String, required: true },
     customerEmail: { type: String, required: true },
     statusHistory: { type: [OrderStatusHistorySchema], default: [] },

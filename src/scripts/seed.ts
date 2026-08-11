@@ -7,7 +7,7 @@ import { ProductModel } from '../models/Product';
 import { UserModel } from '../models/User';
 import { ReviewModel } from '../models/Review';
 import { CartModel } from '../models/Cart';
-import { OrderModel } from '../models/Order';
+import { OrderModel, type OrderStatus } from '../models/Order';
 import { NotificationRecipientModel } from '../models/NotificationRecipient';
 import { auth } from '../lib/auth';
 import slugify from 'slugify';
@@ -238,7 +238,7 @@ async function seed() {
         }
 
         const total = subtotal; // No tax/shipping for simplicity
-        const status = ['pending', 'completed', 'canceled'][Math.floor(Math.random() * 3)];
+        const status: OrderStatus = ['pending', 'completed', 'canceled'][Math.floor(Math.random() * 3)] as OrderStatus;
 
         const order = await OrderModel.create({
           user: user._id,
