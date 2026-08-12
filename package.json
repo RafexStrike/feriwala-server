@@ -2,7 +2,7 @@
   "name": "feriwala-server",
   "version": "1.0.0",
   "private": true,
-    "engines": {
+  "engines": {
     "node": "22.x"
   },
   "main": "dist/index.js",
