@@ -6487,7 +6487,7 @@ Every request to an admin endpoint is filtered through middleware in src/middlew
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "types": ["node"],
-    "ignoreDeprecations": "6.0"
+
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules"]
