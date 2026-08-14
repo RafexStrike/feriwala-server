@@ -26,6 +26,8 @@ export interface IOrder {
   profit: number;
   shippingAddress: string;
   customerEmail: string;
+  whatsappNumber: string;
+  facebookProfileLink?: string;
   statusHistory: IOrderStatusHistory[];
   notes?: string;
 }
@@ -61,6 +63,8 @@ const OrderSchema = new Schema<IOrder>(
     profit: { type: Number, required: true },
     shippingAddress: { type: String, required: true },
     customerEmail: { type: String, required: true },
+    whatsappNumber: { type: String, required: true },
+    facebookProfileLink: { type: String },
     statusHistory: { type: [OrderStatusHistorySchema], default: [] },
     notes: { type: String, default: '' }
   },

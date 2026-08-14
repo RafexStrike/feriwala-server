@@ -15,10 +15,12 @@ const calculateOrderTotals = (items: Array<{ quantity: number; price: number; co
 };
 
 export const createOrder = asyncHandler(async (req: Request, res: Response): Promise<void> => {
-  const { shippingAddress, customerEmail, notes } = req.body as {
+  const { shippingAddress, customerEmail, notes, whatsappNumber, facebookProfileLink } = req.body as {
     shippingAddress: string;
     customerEmail?: string;
     notes?: string;
+    whatsappNumber: string;
+    facebookProfileLink?: string;
   };
 
   try {
@@ -61,6 +63,8 @@ export const createOrder = asyncHandler(async (req: Request, res: Response): Pro
           profit: totals.profit,
           shippingAddress,
           customerEmail: customerEmail ?? req.user!.email,
+          whatsappNumber,
+          facebookProfileLink,
           notes: notes ?? '',
           statusHistory: [
             {
