@@ -1,0 +1,904 @@
+◇ injected env (18) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+{"level":30,"time":1787800209164,"pid":83522,"hostname":"strikePC","msg":"MongoDB connected successfully"}
+
+================================================================================
+DATABASE INSPECTION REPORT
+================================================================================
+
+{"level":30,"time":1787800209165,"pid":83522,"hostname":"strikePC","msg":"🔍 Starting database inspection..."}
+📊 Total Collections Found: 11
+
+
+📁 Collection: notificationrecipients
+   └─ Documents: 1
+   └─ Fields: _id, email, __v, createdAt, createdBy, isActive, notificationTypes, updatedAt
+
+📁 Collection: carts
+   └─ Documents: 4
+   └─ Fields: _id, user, __v, createdAt, items, updatedAt
+
+📁 Collection: account
+   └─ Documents: 7
+   └─ Fields: _id, accountId, providerId, userId, password, createdAt, updatedAt
+
+📁 Collection: products
+   └─ Documents: 63
+   └─ Fields: _id, name, __v, averageRating, briefDescription, categories, costPrice, createdAt, detailedDescription, images, isActive, price, reviewCount, stock, tags, updatedAt
+
+📁 Collection: reviews
+   └─ Documents: 83
+   └─ Fields: _id, product, user, __v, comment, createdAt, rating, updatedAt
+
+📁 Collection: users
+   └─ Documents: 1
+   └─ Fields: _id, email, __v, createdAt, emailVerified, lastLoginAt, role, updatedAt
+
+📁 Collection: user
+   └─ Documents: 7
+   └─ Fields: _id, name, email, emailVerified, createdAt, updatedAt, role
+
+📁 Collection: session
+   └─ Documents: 59
+   └─ Fields: _id, expiresAt, token, createdAt, updatedAt, ipAddress, userAgent, userId
+
+📁 Collection: orders
+   └─ Documents: 8
+   └─ Fields: _id, user, items, status, subtotal, total, profit, shippingAddress, customerEmail, statusHistory, notes, createdAt, updatedAt, __v
+
+📁 Collection: tags
+   └─ Documents: 8
+   └─ Fields: _id, slug, __v, createdAt, isActive, name, updatedAt
+
+📁 Collection: categories
+   └─ Documents: 8
+   └─ Fields: _id, slug, __v, createdAt, description, isActive, name, updatedAt
+
+================================================================================
+DETAILED COLLECTION INFORMATION
+================================================================================
+
+📋 NOTIFICATIONRECIPIENTS
+--------------------------------------------------------------------------------
+Total Documents: 1
+Fields: _id, email, __v, createdAt, createdBy, isActive, notificationTypes, updatedAt
+
+Sample Documents (showing 1):
+
+  1. ID: 6a2d47acc89bd3cfe3757ec9
+     {
+    "_id": "6a2d47acc89bd3cfe3757ec9",
+    "email": "seed.user@example.com",
+    "__v": 0,
+    "createdAt": "2026-06-13T12:06:03.945Z",
+    "createdBy": "6a2d4792c89bd3cfe3757e9f",
+    "isActive": true,
+    "notificationTypes": [
+        "order-status"
+    ],
+    "updatedAt": "2026-06-13T12:06:03.945Z"
+}
+
+📋 CARTS
+--------------------------------------------------------------------------------
+Total Documents: 4
+Fields: _id, user, __v, createdAt, items, updatedAt
+
+Sample Documents (showing 4):
+
+  1. ID: 6a2d45ccc89bd3cfe3757e94
+     {
+    "_id": "6a2d45ccc89bd3cfe3757e94",
+    "user": null,
+    "__v": 0,
+    "createdAt": "2026-06-13T11:58:04.821Z",
+    "items": [
+        {
+            "product": "6a2d45abc89bd3cfe3757e3b",
+            "quantity": 2,
+            "priceSnapshot": 923
+        },
+        {
+            "product": "6a2d45a9c89bd3cfe3757e30",
+            "quantity": 3,
+            "priceSnapshot": 247
+        }
+    ],
+    "updatedAt": "2026-06-13T11:58:05.222Z"
+}
+
+  2. ID: 6a2d47abc89bd3cfe3757ec8
+     {
+    "_id": "6a2d47abc89bd3cfe3757ec8",
+    "user": "6a2d4792c89bd3cfe3757e9f",
+    "__v": 0,
+    "createdAt": "2026-06-13T12:06:03.665Z",
+    "items": [
+        {
+            "product": "6a2d45abc89bd3cfe3757e3e",
+            "quantity": 3,
+            "priceSnapshot": 831
+        },
+        {
+            "product": "6a2d45adc89bd3cfe3757e4c",
+            "quantity": 1,
+            "priceSnapshot": 426
+        }
+    ],
+    "updatedAt": "2026-06-13T12:06:03.665Z"
+}
+
+  3. ID: 6a2d7829e2dc24eca4df04a3
+     {
+    "_id": "6a2d7829e2dc24eca4df04a3",
+    "user": "6a2d4e880d2b7180914bc1e2",
+    "items": [],
+    "createdAt": "2026-06-13T15:32:57.435Z",
+    "updatedAt": "2026-08-07T14:21:47.286Z",
+    "__v": 4
+}
+
+  4. ID: 6a74af1ae43fa5d947f0864b
+     {
+    "_id": "6a74af1ae43fa5d947f0864b",
+    "user": "6a2d4903dbef570b3ca756d3",
+    "items": [],
+    "createdAt": "2026-08-06T15:58:18.424Z",
+    "updatedAt": "2026-08-25T08:08:06.650Z",
+    "__v": 10
+}
+
+📋 ACCOUNT
+--------------------------------------------------------------------------------
+Total Documents: 7
+Fields: _id, accountId, providerId, userId, password, createdAt, updatedAt
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d45b28eee00b5c9ba488b
+     {
+    "_id": "6a2d45b28eee00b5c9ba488b",
+    "accountId": "6a2d45b28eee00b5c9ba488a",
+    "providerId": "credential",
+    "userId": "6a2d45b28eee00b5c9ba488a",
+    "password": "fd39d0e3cad84f8acde98c7f2f98f75a:7cb63cb6e457767c2d8c4749489b630ed7a996e9d7dba13507a939404006ecb1d602778269cc00f19bda22eb389c0b5209bf8746dfaa1ddf98b91dc3543de893",
+    "createdAt": "2026-06-13T11:57:38.746Z",
+    "updatedAt": "2026-06-13T11:57:38.746Z"
+}
+
+  2. ID: 6a2d45b38eee00b5c9ba488e
+     {
+    "_id": "6a2d45b38eee00b5c9ba488e",
+    "accountId": "6a2d45b38eee00b5c9ba488d",
+    "providerId": "credential",
+    "userId": "6a2d45b38eee00b5c9ba488d",
+    "password": "e91f1542967bf2faa38cf3372f7b9dcf:edf6f8d42f27e4637de769b7fe2018b57a968cc513d1b6de71dab068530d8ec5b784380d02c5f738d1a2e54b7cd1cc4beb64609b737bd4f8ac0724094723330a",
+    "createdAt": "2026-06-13T11:57:39.491Z",
+    "updatedAt": "2026-06-13T11:57:39.491Z"
+}
+
+  3. ID: 6a2d45b48eee00b5c9ba4892
+     {
+    "_id": "6a2d45b48eee00b5c9ba4892",
+    "accountId": "6a2d45b48eee00b5c9ba4890",
+    "providerId": "credential",
+    "userId": "6a2d45b48eee00b5c9ba4890",
+    "password": "fcba94123e0a34439fa2bb285287cd79:252110216fa972f6fee83e8967abdaace395acf135a3a15d73141dd8440169d47d1739dcd2151c0424cdbe97ff627457c15a490b9a2cd55fec863a0b791f60ba",
+    "createdAt": "2026-06-13T11:57:40.208Z",
+    "updatedAt": "2026-06-13T11:57:40.208Z"
+}
+
+  4. ID: 6a2d45b48eee00b5c9ba4893
+     {
+    "_id": "6a2d45b48eee00b5c9ba4893",
+    "accountId": "6a2d45b48eee00b5c9ba4891",
+    "providerId": "credential",
+    "userId": "6a2d45b48eee00b5c9ba4891",
+    "password": "ccca7fe68ce17dde607e382dabf283d8:f8b9a760f5f9752abfa1ba3bb2f3f9284f94cfc512e64d557637e304cf9f215142eabbfdb170af5213c8c50c59afea1f7612bb6e515658c00cf783cd2f914df9",
+    "createdAt": "2026-06-13T11:57:40.309Z",
+    "updatedAt": "2026-06-13T11:57:40.309Z"
+}
+
+  5. ID: 6a2d4903dbef570b3ca756d4
+     {
+    "_id": "6a2d4903dbef570b3ca756d4",
+    "accountId": "6a2d4903dbef570b3ca756d3",
+    "providerId": "credential",
+    "userId": "6a2d4903dbef570b3ca756d3",
+    "password": "ffe68dcab66a3dae68d1be8b158e8c27:2df732ac493204207dd625fd90b8ed3ea522dd2e185fd5f2c7ac4723ece33581bee5e40b8835b40f2fefa37994421a0330386d79c4a10a8fcd672dde51d01916",
+    "createdAt": "2026-06-13T12:11:47.796Z",
+    "updatedAt": "2026-06-13T12:11:47.796Z"
+}
+
+📋 PRODUCTS
+--------------------------------------------------------------------------------
+Total Documents: 63
+Fields: _id, name, __v, averageRating, briefDescription, categories, costPrice, createdAt, detailedDescription, images, isActive, price, reviewCount, stock, tags, updatedAt
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d45a9c89bd3cfe3757e2e
+     {
+    "_id": "6a2d45a9c89bd3cfe3757e2e",
+    "name": "AUTOSEED_Laptop_1",
+    "__v": 0,
+    "averageRating": 3.5,
+    "briefDescription": "High-quality AUTOSEED_Laptop_1 with great features.",
+    "categories": [
+        "6a2d45a7c89bd3cfe3757e1d",
+        "6a2d45a7c89bd3cfe3757e1e",
+        "6a2d45a7c89bd3cfe3757e1f"
+    ],
+    "costPrice": 643,
+    "createdAt": "2026-06-13T11:57:29.325Z",
+    "detailedDescription": "This is a detailed description for AUTOSEED_Laptop_1. It offers exceptional performance, durability, and value. Perfect for users who need a reliable Laptop for their daily activities.",
+    "images": [
+        "https://picsum.photos/seed/AUTOSEED_Laptop_1/400/400",
+        "https://picsum.photos/seed/AUTOSEED_Laptop_12/400/400"
+    ],
+    "isActive": true,
+    "price": 923,
+    "reviewCount": 2,
+    "stock": 107,
+    "tags": [
+        "6a2d45a9c89bd3cfe3757e2d"
+    ],
+    "updatedAt": "2026-06-13T12:05:49.446Z"
+}
+
+  2. ID: 6a2d45a9c89bd3cfe3757e2f
+     {
+    "_id": "6a2d45a9c89bd3cfe3757e2f",
+    "name": "AUTOSEED_Headphones_2",
+    "__v": 0,
+    "averageRating": 5,
+    "briefDescription": "High-quality AUTOSEED_Headphones_2 with great features.",
+    "categories": [],
+    "costPrice": 344,
+    "createdAt": "2026-06-13T11:57:29.459Z",
+    "detailedDescription": "This is a detailed description for AUTOSEED_Headphones_2. It offers exceptional performance, durability, and value. Perfect for users who need a reliable Headphones for their daily activities.",
+    "images": [
+        "https://picsum.photos/seed/AUTOSEED_Headphones_2/400/400",
+        "https://picsum.photos/seed/AUTOSEED_Headphones_22/400/400"
+    ],
+    "isActive": true,
+    "price": 92,
+    "reviewCount": 1,
+    "stock": 72,
+    "tags": [
+        "6a2d45a8c89bd3cfe3757e27",
+        "6a2d45a8c89bd3cfe3757e28",
+        "6a2d45a8c89bd3cfe3757e26",
+        "6a2d45a8c89bd3cfe3757e25",
+        "6a2d45a8c89bd3cfe3757e29",
+        "6a2d45a9c89bd3cfe3757e2d",
+        "6a2d45a9c89bd3cfe3757e2c",
+        "6a2d45a8c89bd3cfe3757e2a"
+    ],
+    "updatedAt": "2026-06-13T12:05:49.702Z"
+}
+
+  3. ID: 6a2d45a9c89bd3cfe3757e30
+     {
+    "_id": "6a2d45a9c89bd3cfe3757e30",
+    "name": "AUTOSEED_T-Shirt_3",
+    "__v": 0,
+    "averageRating": 4,
+    "briefDescription": "High-quality AUTOSEED_T-Shirt_3 with great features.",
+    "categories": [
+        "6a2d45a8c89bd3cfe3757e24",
+        "6a2d45a7c89bd3cfe3757e1d"
+    ],
+    "costPrice": 539,
+    "createdAt": "2026-06-13T11:57:29.589Z",
+    "detailedDescription": "This is a detailed description for AUTOSEED_T-Shirt_3. It offers exceptional performance, durability, and value. Perfect for users who need a reliable T-Shirt for their daily activities.",
+    "images": [
+        "https://picsum.photos/seed/AUTOSEED_T-Shirt_3/400/400",
+        "https://picsum.photos/seed/AUTOSEED_T-Shirt_32/400/400"
+    ],
+    "isActive": true,
+    "price": 462,
+    "reviewCount": 2,
+    "stock": 17,
+    "tags": [],
+    "updatedAt": "2026-06-13T12:05:49.957Z"
+}
+
+  4. ID: 6a2d45a9c89bd3cfe3757e31
+     {
+    "_id": "6a2d45a9c89bd3cfe3757e31",
+    "name": "AUTOSEED_Jeans_4",
+    "__v": 0,
+    "averageRating": 3.5,
+    "briefDescription": "High-quality AUTOSEED_Jeans_4 with great features.",
+    "categories": [
+        "6a2d45a7c89bd3cfe3757e1f",
+        "6a2d45a7c89bd3cfe3757e20"
+    ],
+    "costPrice": 7,
+    "createdAt": "2026-06-13T11:57:29.718Z",
+    "detailedDescription": "This is a detailed description for AUTOSEED_Jeans_4. It offers exceptional performance, durability, and value. Perfect for users who need a reliable Jeans for their daily activities.",
+    "images": [
+        "https://picsum.photos/seed/AUTOSEED_Jeans_4/400/400",
+        "https://picsum.photos/seed/AUTOSEED_Jeans_42/400/400"
+    ],
+    "isActive": true,
+    "price": 336,
+    "reviewCount": 2,
+    "stock": 49,
+    "tags": [],
+    "updatedAt": "2026-06-13T12:05:50.217Z"
+}
+
+  5. ID: 6a2d45a9c89bd3cfe3757e32
+     {
+    "_id": "6a2d45a9c89bd3cfe3757e32",
+    "name": "AUTOSEED_Blender_5",
+    "__v": 0,
+    "averageRating": 2,
+    "briefDescription": "High-quality AUTOSEED_Blender_5 with great features.",
+    "categories": [
+        "6a2d45a7c89bd3cfe3757e1e",
+        "6a2d45a7c89bd3cfe3757e1f",
+        "6a2d45a7c89bd3cfe3757e20",
+        "6a2d45a7c89bd3cfe3757e21"
+    ],
+    "costPrice": 84,
+    "createdAt": "2026-06-13T11:57:29.847Z",
+    "detailedDescription": "This is a detailed description for AUTOSEED_Blender_5. It offers exceptional performance, durability, and value. Perfect for users who need a reliable Blender for their daily activities.",
+    "images": [
+        "https://picsum.photos/seed/AUTOSEED_Blender_5/400/400",
+        "https://picsum.photos/seed/AUTOSEED_Blender_52/400/400"
+    ],
+    "isActive": true,
+    "price": 232,
+    "reviewCount": 2,
+    "stock": 64,
+    "tags": [],
+    "updatedAt": "2026-06-13T12:05:50.478Z"
+}
+
+📋 REVIEWS
+--------------------------------------------------------------------------------
+Total Documents: 83
+Fields: _id, product, user, __v, comment, createdAt, rating, updatedAt
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d45b4c89bd3cfe3757e6a
+     {
+    "_id": "6a2d45b4c89bd3cfe3757e6a",
+    "product": "6a2d45a9c89bd3cfe3757e2e",
+    "user": null,
+    "__v": 0,
+    "comment": "This AUTOSEED_Laptop_1 is amazing! Really loved it.",
+    "createdAt": "2026-06-13T11:57:40.686Z",
+    "rating": 2,
+    "updatedAt": "2026-06-13T11:57:40.819Z"
+}
+
+  2. ID: 6a2d45b5c89bd3cfe3757e6b
+     {
+    "_id": "6a2d45b5c89bd3cfe3757e6b",
+    "product": "6a2d45a9c89bd3cfe3757e2f",
+    "user": null,
+    "__v": 0,
+    "comment": "This AUTOSEED_Headphones_2 is amazing! Really loved it.",
+    "createdAt": "2026-06-13T11:57:40.948Z",
+    "rating": 5,
+    "updatedAt": "2026-06-13T11:57:40.948Z"
+}
+
+  3. ID: 6a2d45b5c89bd3cfe3757e6c
+     {
+    "_id": "6a2d45b5c89bd3cfe3757e6c",
+    "product": "6a2d45a9c89bd3cfe3757e30",
+    "user": null,
+    "__v": 0,
+    "comment": "This AUTOSEED_T-Shirt_3 is amazing! Really loved it.",
+    "createdAt": "2026-06-13T11:57:41.082Z",
+    "rating": 5,
+    "updatedAt": "2026-06-13T11:57:41.212Z"
+}
+
+  4. ID: 6a2d45b5c89bd3cfe3757e6d
+     {
+    "_id": "6a2d45b5c89bd3cfe3757e6d",
+    "product": "6a2d45a9c89bd3cfe3757e31",
+    "user": null,
+    "__v": 0,
+    "comment": "This AUTOSEED_Jeans_4 is amazing! Really loved it.",
+    "createdAt": "2026-06-13T11:57:41.341Z",
+    "rating": 5,
+    "updatedAt": "2026-06-13T11:57:41.471Z"
+}
+
+  5. ID: 6a2d45b5c89bd3cfe3757e6e
+     {
+    "_id": "6a2d45b5c89bd3cfe3757e6e",
+    "product": "6a2d45a9c89bd3cfe3757e32",
+    "user": null,
+    "__v": 0,
+    "comment": "This AUTOSEED_Blender_5 is amazing! Really loved it.",
+    "createdAt": "2026-06-13T11:57:41.600Z",
+    "rating": 3,
+    "updatedAt": "2026-06-13T11:57:41.600Z"
+}
+
+📋 USERS
+--------------------------------------------------------------------------------
+Total Documents: 1
+Fields: _id, email, __v, createdAt, emailVerified, lastLoginAt, role, updatedAt
+
+Sample Documents (showing 1):
+
+  1. ID: 6a2d4792c89bd3cfe3757e9f
+     {
+    "_id": "6a2d4792c89bd3cfe3757e9f",
+    "email": "seed.user@example.com",
+    "__v": 0,
+    "createdAt": "2026-06-13T12:05:38.182Z",
+    "emailVerified": true,
+    "lastLoginAt": null,
+    "role": "user",
+    "updatedAt": "2026-06-13T12:05:38.182Z"
+}
+
+📋 USER
+--------------------------------------------------------------------------------
+Total Documents: 7
+Fields: _id, name, email, emailVerified, createdAt, updatedAt, role
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d45b28eee00b5c9ba488a
+     {
+    "_id": "6a2d45b28eee00b5c9ba488a",
+    "name": "AUTOSEED_TestUser",
+    "email": "seed.user@example.com",
+    "emailVerified": false,
+    "createdAt": "2026-06-13T11:57:38.602Z",
+    "updatedAt": "2026-06-13T11:57:38.602Z",
+    "role": "user"
+}
+
+  2. ID: 6a2d45b38eee00b5c9ba488d
+     {
+    "_id": "6a2d45b38eee00b5c9ba488d",
+    "name": "AUTOSEED_User_1",
+    "email": "user1@example.com",
+    "emailVerified": false,
+    "createdAt": "2026-06-13T11:57:39.372Z",
+    "updatedAt": "2026-06-13T11:57:39.372Z",
+    "role": "user"
+}
+
+  3. ID: 6a2d45b48eee00b5c9ba4890
+     {
+    "_id": "6a2d45b48eee00b5c9ba4890",
+    "name": "AUTOSEED_User_3",
+    "email": "user3@example.com",
+    "emailVerified": false,
+    "createdAt": "2026-06-13T11:57:40.089Z",
+    "updatedAt": "2026-06-13T11:57:40.089Z",
+    "role": "user"
+}
+
+  4. ID: 6a2d45b48eee00b5c9ba4891
+     {
+    "_id": "6a2d45b48eee00b5c9ba4891",
+    "name": "AUTOSEED_User_2",
+    "email": "user2@example.com",
+    "emailVerified": false,
+    "createdAt": "2026-06-13T11:57:40.193Z",
+    "updatedAt": "2026-06-13T11:57:40.193Z",
+    "role": "user"
+}
+
+  5. ID: 6a2d4903dbef570b3ca756d3
+     {
+    "_id": "6a2d4903dbef570b3ca756d3",
+    "name": "Administrator",
+    "email": "admin@test.com",
+    "emailVerified": true,
+    "createdAt": "2026-06-13T12:11:47.670Z",
+    "updatedAt": "2026-06-13T12:11:47.670Z",
+    "role": "admin"
+}
+
+📋 SESSION
+--------------------------------------------------------------------------------
+Total Documents: 59
+Fields: _id, expiresAt, token, createdAt, updatedAt, ipAddress, userAgent, userId
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d45b28eee00b5c9ba488c
+     {
+    "_id": "6a2d45b28eee00b5c9ba488c",
+    "expiresAt": "2026-06-20T11:57:38.884Z",
+    "token": "twg61a1fihzxmMuaRT551gJkbsFuUJ7z",
+    "createdAt": "2026-06-13T11:57:38.885Z",
+    "updatedAt": "2026-06-13T11:57:38.885Z",
+    "ipAddress": "",
+    "userAgent": "",
+    "userId": "6a2d45b28eee00b5c9ba488a"
+}
+
+  2. ID: 6a2d45b38eee00b5c9ba488f
+     {
+    "_id": "6a2d45b38eee00b5c9ba488f",
+    "expiresAt": "2026-06-20T11:57:39.608Z",
+    "token": "gdEgQFxz9o91ec4A0lYDnTyAUjBlZ9Ur",
+    "createdAt": "2026-06-13T11:57:39.609Z",
+    "updatedAt": "2026-06-13T11:57:39.609Z",
+    "ipAddress": "",
+    "userAgent": "",
+    "userId": "6a2d45b38eee00b5c9ba488d"
+}
+
+  3. ID: 6a2d45b48eee00b5c9ba4894
+     {
+    "_id": "6a2d45b48eee00b5c9ba4894",
+    "expiresAt": "2026-06-20T11:57:40.327Z",
+    "token": "yTGVg1CeY3rebtL9ln4xXGJ4DjYRlGAa",
+    "createdAt": "2026-06-13T11:57:40.327Z",
+    "updatedAt": "2026-06-13T11:57:40.327Z",
+    "ipAddress": "",
+    "userAgent": "",
+    "userId": "6a2d45b48eee00b5c9ba4890"
+}
+
+  4. ID: 6a2d45b48eee00b5c9ba4895
+     {
+    "_id": "6a2d45b48eee00b5c9ba4895",
+    "expiresAt": "2026-06-20T11:57:40.429Z",
+    "token": "KX6wEcRq7KjHtdMd7HXZs3hx4hf6IjGQ",
+    "createdAt": "2026-06-13T11:57:40.430Z",
+    "updatedAt": "2026-06-13T11:57:40.430Z",
+    "ipAddress": "",
+    "userAgent": "",
+    "userId": "6a2d45b48eee00b5c9ba4891"
+}
+
+  5. ID: 6a2d4903dbef570b3ca756d5
+     {
+    "_id": "6a2d4903dbef570b3ca756d5",
+    "expiresAt": "2026-06-20T12:11:47.921Z",
+    "token": "FWePXZxKkNC8GMdvuECO3I2qxQV6KbJB",
+    "createdAt": "2026-06-13T12:11:47.921Z",
+    "updatedAt": "2026-06-13T12:11:47.921Z",
+    "ipAddress": "",
+    "userAgent": "",
+    "userId": "6a2d4903dbef570b3ca756d3"
+}
+
+📋 ORDERS
+--------------------------------------------------------------------------------
+Total Documents: 8
+Fields: _id, user, items, status, subtotal, total, profit, shippingAddress, customerEmail, statusHistory, notes, createdAt, updatedAt, __v
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d47abef5483aa3a074b75
+     {
+    "_id": "6a2d47abef5483aa3a074b75",
+    "user": "6a2d4792c89bd3cfe3757e9f",
+    "items": [
+        {
+            "product": "6a2d45acc89bd3cfe3757e48",
+            "name": "AUTOSEED_Dumbbells_27",
+            "quantity": 2,
+            "price": 679,
+            "costPrice": 745
+        },
+        {
+            "product": "6a2d45aec89bd3cfe3757e57",
+            "name": "AUTOSEED_Dumbbells_42",
+            "quantity": 2,
+            "price": 294,
+            "costPrice": 148
+        }
+    ],
+    "status": "pending",
+    "subtotal": 1946,
+    "total": 1946,
+    "profit": 160,
+    "shippingAddress": "AUTOSEED_Address 1, City, Country",
+    "customerEmail": "seed.user@example.com",
+    "statusHistory": [
+        {
+            "status": "pending",
+            "note": "Initial order status",
+            "changedBy": null,
+            "changedAt": "2026-06-13T12:06:03.801Z"
+        }
+    ],
+    "notes": "Seed order 1 for seed.user@example.com",
+    "createdAt": "2026-06-13T12:06:03.810Z",
+    "updatedAt": "2026-06-13T12:06:03.810Z",
+    "__v": 0
+}
+
+  2. ID: 6a2d7df20ec7ea8a8bce5a8d
+     {
+    "_id": "6a2d7df20ec7ea8a8bce5a8d",
+    "user": "6a2d4e880d2b7180914bc1e2",
+    "items": [
+        {
+            "product": "6a2d45b1c89bd3cfe3757e69",
+            "name": "AUTOSEED_Smartphone_60",
+            "quantity": 2,
+            "price": 404,
+            "costPrice": 518
+        }
+    ],
+    "status": "completed",
+    "subtotal": 808,
+    "total": 808,
+    "profit": -228,
+    "shippingAddress": "123 Test Street, City, Country",
+    "customerEmail": "user-test-rafi@example.com",
+    "statusHistory": [
+        {
+            "status": "pending",
+            "note": "Order created",
+            "changedBy": null,
+            "changedAt": "2026-06-13T15:57:38.899Z"
+        },
+        {
+            "status": "completed",
+            "note": "Order delivered",
+            "changedBy": "6a2d4903dbef570b3ca756d3",
+            "changedAt": "2026-07-12T06:38:11.579Z"
+        }
+    ],
+    "notes": "Leave at the front door",
+    "createdAt": "2026-06-13T15:57:38.903Z",
+    "updatedAt": "2026-07-12T06:38:11.587Z",
+    "__v": 1
+}
+
+  3. ID: 6a75e9fb14b897a4e8cd4e3b
+     {
+    "_id": "6a75e9fb14b897a4e8cd4e3b",
+    "user": "6a2d4e880d2b7180914bc1e2",
+    "items": [
+        {
+            "product": "6a74af08e43fa5d947f0864a",
+            "name": "helooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+            "quantity": 1,
+            "price": 100,
+            "costPrice": 60
+        }
+    ],
+    "status": "completed",
+    "subtotal": 100,
+    "total": 100,
+    "profit": 40,
+    "shippingAddress": "joydebpur, gazipur",
+    "customerEmail": "hi@hello.com",
+    "statusHistory": [
+        {
+            "status": "pending",
+            "note": "Order created",
+            "changedBy": null,
+            "changedAt": "2026-08-07T14:21:47.057Z"
+        },
+        {
+            "status": "completed",
+            "note": "done",
+            "changedBy": "6a2d4903dbef570b3ca756d3",
+            "changedAt": "2026-08-07T14:23:16.310Z"
+        }
+    ],
+    "notes": "",
+    "createdAt": "2026-08-07T14:21:47.067Z",
+    "updatedAt": "2026-08-07T14:23:16.316Z",
+    "__v": 1
+}
+
+  4. ID: 6a76089814b897a4e8cd4e3c
+     {
+    "_id": "6a76089814b897a4e8cd4e3c",
+    "user": "6a2d4903dbef570b3ca756d3",
+    "items": [
+        {
+            "product": "6a74af08e43fa5d947f0864a",
+            "name": "helooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+            "quantity": 1,
+            "price": 100,
+            "costPrice": 60
+        }
+    ],
+    "status": "pending",
+    "subtotal": 100,
+    "total": 100,
+    "profit": 40,
+    "shippingAddress": "hello, how are you address",
+    "customerEmail": "hello@hi.com",
+    "statusHistory": [
+        {
+            "status": "pending",
+            "note": "Order created",
+            "changedBy": null,
+            "changedAt": "2026-08-07T16:32:24.897Z"
+        }
+    ],
+    "notes": "hellooo",
+    "createdAt": "2026-08-07T16:32:24.901Z",
+    "updatedAt": "2026-08-07T16:32:24.901Z",
+    "__v": 0
+}
+
+  5. ID: 6a76149414b897a4e8cd4e3d
+     {
+    "_id": "6a76149414b897a4e8cd4e3d",
+    "user": "6a2d4903dbef570b3ca756d3",
+    "items": [
+        {
+            "product": "6a74af08e43fa5d947f0864a",
+            "name": "helooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo",
+            "quantity": 1,
+            "price": 100,
+            "costPrice": 60
+        }
+    ],
+    "status": "pending",
+    "subtotal": 100,
+    "total": 100,
+    "profit": 40,
+    "shippingAddress": "dfsgsdfgsdfgsdfgsdfgdsfg",
+    "customerEmail": "asdf@asdfas.ergas",
+    "statusHistory": [
+        {
+            "status": "pending",
+            "note": "Order created",
+            "changedBy": null,
+            "changedAt": "2026-08-07T17:23:32.149Z"
+        }
+    ],
+    "notes": "adsfsadfgasdf",
+    "createdAt": "2026-08-07T17:23:32.154Z",
+    "updatedAt": "2026-08-07T17:23:32.154Z",
+    "__v": 0
+}
+
+📋 TAGS
+--------------------------------------------------------------------------------
+Total Documents: 8
+Fields: _id, slug, __v, createdAt, isActive, name, updatedAt
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d45a8c89bd3cfe3757e25
+     {
+    "_id": "6a2d45a8c89bd3cfe3757e25",
+    "slug": "autoseed_premium",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:28.319Z",
+    "isActive": true,
+    "name": "AUTOSEED_Premium",
+    "updatedAt": "2026-06-13T12:05:28.036Z"
+}
+
+  2. ID: 6a2d45a8c89bd3cfe3757e26
+     {
+    "_id": "6a2d45a8c89bd3cfe3757e26",
+    "slug": "autoseed_eco-friendly",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:28.319Z",
+    "isActive": true,
+    "name": "AUTOSEED_Eco-Friendly",
+    "updatedAt": "2026-06-13T12:05:28.036Z"
+}
+
+  3. ID: 6a2d45a8c89bd3cfe3757e29
+     {
+    "_id": "6a2d45a8c89bd3cfe3757e29",
+    "slug": "autoseed_discounted",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:28.319Z",
+    "isActive": true,
+    "name": "AUTOSEED_Discounted",
+    "updatedAt": "2026-06-13T12:05:28.036Z"
+}
+
+  4. ID: 6a2d45a8c89bd3cfe3757e27
+     {
+    "_id": "6a2d45a8c89bd3cfe3757e27",
+    "slug": "autoseed_new-arrival",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:28.319Z",
+    "isActive": true,
+    "name": "AUTOSEED_New Arrival",
+    "updatedAt": "2026-06-13T12:05:28.036Z"
+}
+
+  5. ID: 6a2d45a8c89bd3cfe3757e28
+     {
+    "_id": "6a2d45a8c89bd3cfe3757e28",
+    "slug": "autoseed_best-seller",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:28.319Z",
+    "isActive": true,
+    "name": "AUTOSEED_Best Seller",
+    "updatedAt": "2026-06-13T12:05:28.036Z"
+}
+
+📋 CATEGORIES
+--------------------------------------------------------------------------------
+Total Documents: 8
+Fields: _id, slug, __v, createdAt, description, isActive, name, updatedAt
+
+Sample Documents (showing 5):
+
+  1. ID: 6a2d45a7c89bd3cfe3757e1c
+     {
+    "_id": "6a2d45a7c89bd3cfe3757e1c",
+    "slug": "autoseed_clothing",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:26.722Z",
+    "description": "Realistic description for AUTOSEED_Clothing category.",
+    "isActive": true,
+    "name": "AUTOSEED_Clothing",
+    "updatedAt": "2026-06-13T12:05:26.428Z"
+}
+
+  2. ID: 6a2d45a7c89bd3cfe3757e1d
+     {
+    "_id": "6a2d45a7c89bd3cfe3757e1d",
+    "slug": "autoseed_books",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:26.722Z",
+    "description": "Realistic description for AUTOSEED_Books category.",
+    "isActive": true,
+    "name": "AUTOSEED_Books",
+    "updatedAt": "2026-06-13T12:05:26.428Z"
+}
+
+  3. ID: 6a2d45a7c89bd3cfe3757e1e
+     {
+    "_id": "6a2d45a7c89bd3cfe3757e1e",
+    "slug": "autoseed_beauty-and-health",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:26.722Z",
+    "description": "Realistic description for AUTOSEED_Beauty & Health category.",
+    "isActive": true,
+    "name": "AUTOSEED_Beauty & Health",
+    "updatedAt": "2026-06-13T12:05:26.428Z"
+}
+
+  4. ID: 6a2d45a7c89bd3cfe3757e1f
+     {
+    "_id": "6a2d45a7c89bd3cfe3757e1f",
+    "slug": "autoseed_sports",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:26.722Z",
+    "description": "Realistic description for AUTOSEED_Sports category.",
+    "isActive": true,
+    "name": "AUTOSEED_Sports",
+    "updatedAt": "2026-06-13T12:05:26.429Z"
+}
+
+  5. ID: 6a2d45a7c89bd3cfe3757e20
+     {
+    "_id": "6a2d45a7c89bd3cfe3757e20",
+    "slug": "autoseed_toys",
+    "__v": 0,
+    "createdAt": "2026-06-13T11:57:26.722Z",
+    "description": "Realistic description for AUTOSEED_Toys category.",
+    "isActive": true,
+    "name": "AUTOSEED_Toys",
+    "updatedAt": "2026-06-13T12:05:26.429Z"
+}
+
+================================================================================
+SUMMARY STATISTICS
+================================================================================
+Total Collections: 11
+Total Documents: 249
+Empty Collections: 0
+
+✅ Database inspection completed successfully!
+================================================================================
+

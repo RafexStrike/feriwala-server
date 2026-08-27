@@ -14,7 +14,8 @@
     "admin:add": "tsx src/scripts/addAdmin.ts",
     "admin:delete": "tsx src/scripts/deleteAdmin.ts",
     "db:seed": "tsx src/scripts/seed.ts",
-    "db:cleanup": "tsx src/scripts/cleanup.ts"
+    "db:cleanup": "tsx src/scripts/cleanup.ts",
+    "db:find": "tsx src/scripts/findAllData.ts"
   },
   "dependencies": {
     "better-auth": "^1.6.16",
