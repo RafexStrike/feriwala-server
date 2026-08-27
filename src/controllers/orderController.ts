@@ -100,9 +100,11 @@ export const getOrder = asyncHandler(async (req: Request, res: Response): Promis
     throw new ApiError(404, 'Order not found');
   }
 
-  const orderUserId = typeof (order.user as any)?._id !== 'undefined' ? String((order.user as any)._id) : String(order.user);
-  if (req.user!.role !== 'admin' && orderUserId !== req.user!.id) {
-    throw new ApiError(403, 'Access denied');
+  if (req.user!.role !== 'admin') {
+    const isOwner = await OrderModel.exists({ _id: order._id, user: req.user!.id });
+    if (!isOwner) {
+      throw new ApiError(403, 'Access denied');
+    }
   }
 
   res.json({ success: true, data: order });
