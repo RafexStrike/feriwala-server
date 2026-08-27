@@ -17,46 +17,78 @@ const parseObjectIdArray = (values: unknown): Types.ObjectId[] => {
     .map((value) => new Types.ObjectId(value));
 };
 
+const parseQueryStringValues = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value
+      .filter((item): item is string => typeof item === 'string')
+      .flatMap((item) => item.split(',').map((segment) => segment.trim()).filter(Boolean));
+  }
+
+  if (typeof value === 'string') {
+    return value
+      .split(',')
+      .map((segment) => segment.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
+
 const briefProductProjection =
   'name briefDescription price stock categories tags images isActive averageRating reviewCount createdAt updatedAt';
+
+const sortMap = {
+  newest: { createdAt: -1 },
+  'price-asc': { price: 1, createdAt: -1 },
+  'price-desc': { price: -1, createdAt: -1 },
+  'top-rated': { averageRating: -1, reviewCount: -1, createdAt: -1 }
+} as const;
 
 export const listProducts = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const page = Math.max(Number(req.query.page ?? 1), 1);
   const limit = Math.min(Math.max(Number(req.query.limit ?? 12), 1), 100);
   const search = typeof req.query.search === 'string' ? req.query.search.trim() : '';
-  const categoryId = typeof req.query.categoryId === 'string' ? req.query.categoryId : '';
-  const tagId = typeof req.query.tagId === 'string' ? req.query.tagId : '';
+  const categoryIds = parseQueryStringValues(req.query.categoryId);
+  const tagIds = parseQueryStringValues(req.query.tagId);
+  const sortKey = typeof req.query.sort === 'string' ? req.query.sort : 'newest';
   const isActive = req.query.isActive === 'false' ? false : true;
 
   const filter: any = { isActive };
+
   if (search) {
     filter.$or = [
       { name: { $regex: search, $options: 'i' } },
       { briefDescription: { $regex: search, $options: 'i' } }
     ];
   }
-  if (Types.ObjectId.isValid(categoryId)) {
-    filter.categories = new Types.ObjectId(categoryId);
-  }
-  if (Types.ObjectId.isValid(tagId)) {
-    filter.tags = new Types.ObjectId(tagId);
+
+  const validCategoryIds = categoryIds.filter((categoryId) => Types.ObjectId.isValid(categoryId));
+  if (validCategoryIds.length > 0) {
+    filter.categories = { $in: validCategoryIds.map((categoryId) => new Types.ObjectId(categoryId)) };
   }
 
-  const [items, total] = await Promise.all([
-    ProductModel.find(filter)
-      .select(briefProductProjection)
-      .populate('categories', 'name slug')
-      .populate('tags', 'name slug')
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit),
-    ProductModel.countDocuments(filter)
-  ]);
+  const validTagIds = tagIds.filter((tagId) => Types.ObjectId.isValid(tagId));
+  if (validTagIds.length > 0) {
+    filter.tags = { $in: validTagIds.map((tagId) => new Types.ObjectId(tagId)) };
+  }
+
+  const total = await ProductModel.countDocuments(filter);
+  const pages = Math.max(Math.ceil(total / limit), 1);
+  const safePage = Math.min(page, pages);
+  const sort = sortMap[sortKey as keyof typeof sortMap] ?? sortMap.newest;
+
+  const items = await ProductModel.find(filter)
+    .select(briefProductProjection)
+    .populate('categories', 'name slug')
+    .populate('tags', 'name slug')
+    .sort(sort)
+    .skip((safePage - 1) * limit)
+    .limit(limit);
 
   res.json({
     success: true,
     data: items,
-    pagination: { page, limit, total, pages: Math.ceil(total / limit) || 1 }
+    pagination: { page: safePage, limit, total, pages }
   });
 });
 
