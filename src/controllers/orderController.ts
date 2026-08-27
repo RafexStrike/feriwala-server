@@ -4,15 +4,8 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { ApiError } from '../utils/ApiError';
 import { CartModel } from '../models/Cart';
 import { OrderModel, OrderStatus } from '../models/Order';
-import { ProductModel } from '../models/Product';
+import { createOrderRecord } from '../services/orderCreationService';
 import { notifyOrderStatusChange } from '../services/orderNotificationService';
-
-const calculateOrderTotals = (items: Array<{ quantity: number; price: number; costPrice: number }>) => {
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const total = subtotal;
-  const profit = items.reduce((sum, item) => sum + (item.price - item.costPrice) * item.quantity, 0);
-  return { subtotal, total, profit };
-};
 
 export const createOrder = asyncHandler(async (req: Request, res: Response): Promise<void> => {
   const { shippingAddress, customerEmail, notes, whatsappNumber, facebookProfileLink } = req.body as {
@@ -23,66 +16,76 @@ export const createOrder = asyncHandler(async (req: Request, res: Response): Pro
     facebookProfileLink?: string;
   };
 
-  try {
-    const cart = await CartModel.findOne({ user: req.user!.id });
-    if (!cart || !cart.items.length) {
-      throw new ApiError(400, 'Cart is empty');
-    }
-
-    const orderItems = [];
-    for (const item of cart.items) {
-      const product = await ProductModel.findById(item.product);
-      if (!product) {
-        throw new ApiError(404, 'A product in the cart was not found');
-      }
-      if (product.stock < item.quantity) {
-        throw new ApiError(400, `Not enough stock for ${product.name}`);
-      }
-
-      product.stock -= item.quantity;
-      await product.save();
-
-      orderItems.push({
-        product: product._id,
-        name: product.name,
-        quantity: item.quantity,
-        price: item.priceSnapshot,
-        costPrice: product.costPrice
-      });
-    }
-
-    const totals = calculateOrderTotals(orderItems);
-    const order = await OrderModel.create(
-      [
-        {
-          user: new Types.ObjectId(req.user!.id),
-          items: orderItems,
-          status: 'pending',
-          subtotal: totals.subtotal,
-          total: totals.total,
-          profit: totals.profit,
-          shippingAddress,
-          customerEmail: customerEmail ?? req.user!.email,
-          whatsappNumber,
-          facebookProfileLink,
-          notes: notes ?? '',
-          statusHistory: [
-            {
-              status: 'pending',
-              note: 'Order created'
-            }
-          ]
-        }
-      ]
-    );
-
-    cart.items = [];
-    await cart.save();
-
-    res.status(201).json({ success: true, data: order[0] });
-  } catch (error) {
-    throw error;
+  const cart = await CartModel.findOne({ user: req.user!.id });
+  if (!cart || !cart.items.length) {
+    throw new ApiError(400, 'Cart is empty');
   }
+
+  const order = await createOrderRecord({
+    userId: req.user!.id,
+    source: 'website',
+    items: cart.items.map((item) => ({
+      productId: String(item.product),
+      quantity: item.quantity,
+      price: item.priceSnapshot
+    })),
+    shippingAddress,
+    customerEmail: customerEmail ?? req.user!.email,
+    whatsappNumber,
+    facebookProfileLink,
+    notes: notes ?? '',
+    cart
+  });
+
+  res.status(201).json({ success: true, data: order });
+});
+
+export const createManualOrder = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const {
+    source,
+    status,
+    shippingAddress,
+    customerEmail,
+    whatsappNumber,
+    facebookProfileLink,
+    externalCustomerName,
+    externalCustomerPhone,
+    externalCustomerFacebookProfileLink,
+    notes,
+    items
+  } = req.body as {
+    source?: string;
+    status?: OrderStatus;
+    shippingAddress?: string;
+    customerEmail?: string;
+    whatsappNumber?: string;
+    facebookProfileLink?: string;
+    externalCustomerName?: string;
+    externalCustomerPhone?: string;
+    externalCustomerFacebookProfileLink?: string;
+    notes?: string;
+    items: Array<{ productId: string; quantity: number }>;
+  };
+
+  const order = await createOrderRecord({
+    source: source as any,
+    status,
+    items: items.map((item) => ({
+      productId: item.productId,
+      quantity: item.quantity
+    })),
+    shippingAddress,
+    customerEmail,
+    whatsappNumber,
+    facebookProfileLink,
+    externalCustomerName,
+    externalCustomerPhone,
+    externalCustomerFacebookProfileLink,
+    notes,
+    statusNote: 'Manual order created'
+  });
+
+  res.status(201).json({ success: true, data: order });
 });
 
 export const listOrders = asyncHandler(async (req: Request, res: Response): Promise<void> => {
@@ -113,12 +116,12 @@ export const updateOrderStatus = asyncHandler(async (req: Request, res: Response
 
   const { status, note } = req.body as { status: OrderStatus; note?: string };
   order.status = status;
-    order.statusHistory.push({
-      status,
-      note,
-      changedBy: new Types.ObjectId(req.user!.id),
-      changedAt: new Date()
-    });
+  order.statusHistory.push({
+    status,
+    note,
+    changedBy: new Types.ObjectId(req.user!.id),
+    changedAt: new Date()
+  });
 
   await order.save();
   await notifyOrderStatusChange(order, req.user!, note);

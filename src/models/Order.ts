@@ -1,6 +1,7 @@
 import { HydratedDocument, Schema, Types, model } from 'mongoose';
 
 export type OrderStatus = 'pending' | 'completed' | 'canceled';
+export type OrderSource = 'website' | 'facebook' | 'phone' | 'physical_store' | 'in_person' | 'whatsapp' | 'telegram' | 'other';
 
 export interface IOrderItem {
   product: Types.ObjectId;
@@ -18,7 +19,8 @@ export interface IOrderStatusHistory {
 }
 
 export interface IOrder {
-  user: Types.ObjectId;
+  user: Types.ObjectId | null;
+  source: OrderSource;
   items: IOrderItem[];
   status: OrderStatus;
   subtotal: number;
@@ -28,6 +30,9 @@ export interface IOrder {
   customerEmail: string;
   whatsappNumber: string;
   facebookProfileLink?: string;
+  externalCustomerName?: string;
+  externalCustomerPhone?: string;
+  externalCustomerFacebookProfileLink?: string;
   statusHistory: IOrderStatusHistory[];
   notes?: string;
 }
@@ -55,16 +60,24 @@ const OrderStatusHistorySchema = new Schema<IOrderStatusHistory>(
 
 const OrderSchema = new Schema<IOrder>(
   {
-    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    user: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    source: {
+      type: String,
+      enum: ['website', 'facebook', 'phone', 'physical_store', 'in_person', 'whatsapp', 'telegram', 'other'],
+      default: 'website'
+    },
     items: { type: [OrderItemSchema], default: [] },
     status: { type: String, enum: ['pending', 'completed', 'canceled'], default: 'pending' },
     subtotal: { type: Number, required: true, min: 0 },
     total: { type: Number, required: true, min: 0 },
     profit: { type: Number, required: true },
-    shippingAddress: { type: String, required: true },
-    customerEmail: { type: String, required: true },
-    whatsappNumber: { type: String, required: true },
-    facebookProfileLink: { type: String },
+    shippingAddress: { type: String, default: '' },
+    customerEmail: { type: String, default: '' },
+    whatsappNumber: { type: String, default: '' },
+    facebookProfileLink: { type: String, default: '' },
+    externalCustomerName: { type: String, default: '' },
+    externalCustomerPhone: { type: String, default: '' },
+    externalCustomerFacebookProfileLink: { type: String, default: '' },
     statusHistory: { type: [OrderStatusHistorySchema], default: [] },
     notes: { type: String, default: '' }
   },

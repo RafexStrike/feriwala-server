@@ -8,9 +8,11 @@ import {
   listNotificationEmails,
   updateNotificationEmail
 } from '../controllers/adminController';
+import { createManualOrder } from '../controllers/orderController';
 import { requireAdmin } from '../middleware/auth';
 import { validateBody } from '../utils/validate';
 import { notificationEmailSchema } from '../validations/adminValidation';
+import { manualOrderSchema } from '../validations/cartOrderValidation';
 
 const router = Router();
 
@@ -18,6 +20,7 @@ router.use(requireAdmin);
 router.get('/dashboard', getDashboardOverview);
 router.get('/analytics', getAnalytics);
 router.get('/inventory', getInventorySummary);
+router.post('/orders', validateBody(manualOrderSchema), createManualOrder);
 router.get('/notification-emails', listNotificationEmails);
 router.post('/notification-emails', validateBody(notificationEmailSchema), createNotificationEmail);
 router.patch('/notification-emails/:recipientId', validateBody(notificationEmailSchema.partial()), updateNotificationEmail);
