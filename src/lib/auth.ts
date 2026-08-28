@@ -22,7 +22,7 @@ export const auth = betterAuth({
     database: mongodbAdapter(client.db()),
     emailAndPassword: {
         enabled: true,
-        async sendResetPasswordEmail({ user, url }: { user: any; url: string }) {
+        async sendResetPassword({ user, url }: { user: any; url: string }) {
             await sendEmail(
                 user.email,
                 "Reset your password",
