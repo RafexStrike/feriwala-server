@@ -20,6 +20,13 @@ const sendVerificationEmail = async ({ user, url }: { user: { email: string }; u
 export const auth = betterAuth({
     baseURL: ENV.BETTER_AUTH_URL,
     database: mongodbAdapter(client.db()),
+    // Conditionally enable social providers when env vars are present
+    socialProviders: ENV.GOOGLE_CLIENT_ID && ENV.GOOGLE_CLIENT_SECRET ? {
+        google: {
+            clientId: ENV.GOOGLE_CLIENT_ID,
+            clientSecret: ENV.GOOGLE_CLIENT_SECRET,
+        }
+    } : undefined,
     emailAndPassword: {
         enabled: true,
         async sendResetPassword({ user, url }: { user: any; url: string }) {

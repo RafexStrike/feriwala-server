@@ -30,7 +30,10 @@ export const ENV = {
   EMAIL_FROM: requireEnv('EMAIL_FROM'),
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '',
-  UPLOAD_DIR: process.env.UPLOAD_DIR?.trim() || 'uploads'
+  UPLOAD_DIR: process.env.UPLOAD_DIR?.trim() || 'uploads',
+  // Optional Google OAuth credentials (not required for local development)
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID?.trim() || '',
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET?.trim() || ''
 };
 
 export const CORS_ORIGINS = [ENV.CLIENT_FRONTEND_URL, ENV.ADMIN_FRONTEND_URL].filter(Boolean);
