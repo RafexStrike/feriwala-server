@@ -35,6 +35,8 @@ export interface IOrder {
   externalCustomerFacebookProfileLink?: string;
   statusHistory: IOrderStatusHistory[];
   notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const OrderItemSchema = new Schema<IOrderItem>(

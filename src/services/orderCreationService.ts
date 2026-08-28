@@ -2,6 +2,7 @@ import mongoose, { Types } from 'mongoose';
 import { ApiError } from '../utils/ApiError';
 import { ProductModel } from '../models/Product';
 import { OrderModel, type IOrderItem, type OrderStatus, type OrderSource } from '../models/Order';
+import { notifyNewOrder } from './orderNotificationService';
 
 export const ORDER_SOURCES: OrderSource[] = [
   'website',
@@ -145,6 +146,10 @@ export const createOrderRecord = async (input: OrderCreationInput) => {
       }
 
       createdOrder = order;
+    });
+
+    notifyNewOrder(createdOrder).catch((error) => {
+      // Intentionally swallow error; notification failures shouldn't block order creation
     });
 
     return createdOrder;
