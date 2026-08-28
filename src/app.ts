@@ -97,8 +97,16 @@ app.get('/api/auth/sign-in/google', async (req, res) => {
     console.info(`[AUTH SIGNIN] ${req.method} ${req.originalUrl}`);
     // Build a POST to the Better Auth `sign-in/social` endpoint so it can set
     // the OAuth state cookie and return the provider redirect URL.
-    const redirectParam = typeof req.query.redirect === 'string' ? req.query.redirect : (Array.isArray(req.query.redirect) ? req.query.redirect[0] : undefined);
-    const callbackURL = redirectParam ? `${ENV.CLIENT_FRONTEND_URL.replace(/\/$/, '')}${redirectParam.startsWith('/') ? redirectParam : `/${redirectParam}`}` : undefined;
+    const extractString = (val: unknown): string | undefined => {
+      if (typeof val === 'string') return val;
+      if (Array.isArray(val) && val.length && typeof val[0] === 'string') return val[0];
+      return undefined;
+    };
+
+    const redirectParam = extractString(req.query.redirect);
+    const callbackURL = redirectParam
+      ? `${ENV.CLIENT_FRONTEND_URL.replace(/\/$/, '')}${redirectParam.startsWith('/') ? redirectParam : `/${redirectParam}`}`
+      : undefined;
     const socialBody: any = { provider: 'google' };
     if (callbackURL) socialBody.callbackURL = callbackURL;
 
