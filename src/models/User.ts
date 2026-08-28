@@ -21,5 +21,5 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
-export const UserModel = model<IUser>('User', UserSchema);
+export const UserModel = model<IUser>('User', UserSchema, 'user');
 export type UserDocument = HydratedDocument<IUser>;
