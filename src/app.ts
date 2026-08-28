@@ -14,6 +14,7 @@ import { auth } from './lib/auth';
 // to initiate social sign-in without replacing the existing auth system.
 
 const app = express();
+app.set('trust proxy', 1);
 const mongoClient = new MongoClient(ENV.MONGODB_URI);
 
 const buildAuthRequest = (req: express.Request, url: string, method: string, body?: unknown) => {
@@ -28,12 +29,19 @@ const buildAuthRequest = (req: express.Request, url: string, method: string, bod
     }
   });
 
+  const forwardedProto = req.headers['x-forwarded-proto'];
+  const protocol = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto;
+  const requestProtocol = req.secure || (protocol ? protocol.startsWith('https') : false) ? 'https' : 'http';
+  const forwardedHost = req.headers['x-forwarded-host'];
+  const hostValue = Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost;
+  const requestHost = hostValue || req.headers.host;
+
   const hasBody = method !== 'GET' && method !== 'HEAD' && body !== undefined;
   if (hasBody && !headers.has('content-type')) {
     headers.set('content-type', 'application/json');
   }
 
-  return new Request(`http://${req.headers.host}${url}`, {
+  return new Request(`${requestProtocol}://${requestHost}${url}`, {
     method,
     headers,
     body: hasBody ? JSON.stringify(body) : undefined,
@@ -75,28 +83,9 @@ app.get('/health', (_req, res) => {
   res.json({ success: true, message: 'OK' });
 });
 
-// Temporary debug endpoint to inspect auth object keys (no secrets)
-// (no debug endpoints in production-ready code)
-
-app.get('/api/auth/debug', (_req, res) => {
-  // Expose minimal information useful for debugging auth setup (no secrets)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const api = (auth as any).api;
-  res.json({
-    hasApi: !!api,
-    hasSignInSocial: api && typeof api.signInSocial === 'function',
-    googleConfigured: !!ENV.GOOGLE_CLIENT_ID && !!ENV.GOOGLE_CLIENT_SECRET,
-    betterAuthUrl: ENV.BETTER_AUTH_URL,
-  });
-});
-
 // Explicit route to initiate Google social sign-in using Better Auth programmatic API
 app.get('/api/auth/sign-in/google', async (req, res) => {
   try {
-    console.info(`[AUTH SIGNIN] ${req.method} ${req.originalUrl}`);
-    // Build a POST to the Better Auth `sign-in/social` endpoint so it can set
-    // the OAuth state cookie and return the provider redirect URL.
     const extractString = (val: unknown): string | undefined => {
       if (typeof val === 'string') return val;
       if (Array.isArray(val) && val.length && typeof val[0] === 'string') return val[0];
@@ -112,16 +101,11 @@ app.get('/api/auth/sign-in/google', async (req, res) => {
 
     const webReq = buildAuthRequest(req, '/api/auth/sign-in/social', 'POST', socialBody);
     const response = await auth.handler(webReq);
-    console.info(`[AUTH SIGNIN] handler responded ${response.status}`);
 
-    // Forward headers (including Set-Cookie) from the auth handler
     response.headers.forEach((value, key) => {
       res.setHeader(key, value);
     });
 
-    // If the auth handler provided a Location header, forward it. Some
-    // Better Auth endpoints return 200 with a Location header and JSON
-    // indicating `redirect: true`.
     const bodyText = await response.text();
     let bodyJson: any = null;
     try {
@@ -161,8 +145,6 @@ app.all(/\/api\/auth\/.*/, async (req, res) => {
 
   const webReq = buildAuthRequest(req, req.originalUrl, req.method, req.body);
   const response = await auth.handler(webReq);
-
-  console.info(`[AUTH PROXY] ${req.method} ${req.originalUrl} -> ${response.status}`);
 
   response.headers.forEach((value, key) => {
     res.setHeader(key, value);

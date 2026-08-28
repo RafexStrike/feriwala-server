@@ -25,6 +25,7 @@ export const auth = betterAuth({
         google: {
             clientId: ENV.GOOGLE_CLIENT_ID,
             clientSecret: ENV.GOOGLE_CLIENT_SECRET,
+            redirectURI: `${ENV.BETTER_AUTH_URL.replace(/\/$/, '')}/api/auth/callback/google`,
         }
     } : undefined,
     emailAndPassword: {
@@ -53,7 +54,7 @@ export const auth = betterAuth({
             },
         },
     },
-    trustedOrigins: [ENV.CLIENT_FRONTEND_URL, ENV.ADMIN_FRONTEND_URL],
+    trustedOrigins: [ENV.CLIENT_FRONTEND_URL, ENV.ADMIN_FRONTEND_URL, ENV.BETTER_AUTH_URL].filter(Boolean),
     advanced: {
         defaultCookieAttributes: ENV.NODE_ENV === 'production'
             ? { sameSite: 'None', secure: true }
