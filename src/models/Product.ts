@@ -11,6 +11,7 @@ export interface IProduct {
   tags: Types.ObjectId[];
   images: string[];
   isActive: boolean;
+  isFeatured: boolean;
   averageRating: number;
   reviewCount: number;
 }
@@ -27,6 +28,7 @@ const ProductSchema = new Schema<IProduct>(
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag', default: [] }],
     images: [{ type: String, default: [] }],
     isActive: { type: Boolean, default: true },
+    isFeatured: { type: Boolean, default: false },
     averageRating: { type: Number, default: 0 },
     reviewCount: { type: Number, default: 0 }
   },

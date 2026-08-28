@@ -27,3 +27,7 @@ export const inventoryUpdateSchema = z.object({
   stock: z.number().int().nonnegative()
 });
 
+export const featuredUpdateSchema = z.object({
+  isFeatured: z.boolean()
+});
+

@@ -35,7 +35,7 @@ const parseQueryStringValues = (value: unknown): string[] => {
 };
 
 const briefProductProjection =
-  'name briefDescription price stock categories tags images isActive averageRating reviewCount createdAt updatedAt';
+  'name briefDescription price stock categories tags images isActive isFeatured averageRating reviewCount createdAt updatedAt';
 
 const sortMap = {
   newest: { createdAt: -1 },
@@ -159,7 +159,8 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response): P
     categoryIds,
     tagIds,
     images,
-    isActive
+    isActive,
+    isFeatured
   } = req.body as Record<string, unknown>;
 
   if (name !== undefined) product.name = String(name);
@@ -172,6 +173,7 @@ export const updateProduct = asyncHandler(async (req: Request, res: Response): P
   if (tagIds !== undefined) product.tags = parseObjectIdArray(tagIds);
   if (images !== undefined) product.images = Array.isArray(images) ? images.map(String) : product.images;
   if (typeof isActive === 'boolean') product.isActive = isActive;
+  if (typeof isFeatured === 'boolean') product.isFeatured = isFeatured;
 
   await product.save();
   res.json({ success: true, data: product });
@@ -199,3 +201,30 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response):
 
   res.json({ success: true, data: product });
 });
+
+export const getFeaturedProducts = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const items = await ProductModel.find({ isActive: true, isFeatured: true })
+    .select(briefProductProjection)
+    .populate('categories', 'name slug')
+    .populate('tags', 'name slug')
+    .sort({ createdAt: -1 });
+
+  res.json({
+    success: true,
+    data: items
+  });
+});
+
+export const updateFeatured = asyncHandler(async (req: Request, res: Response): Promise<void> => {
+  const product = await ProductModel.findById(req.params.productId);
+  if (!product) {
+    throw new ApiError(404, 'Product not found');
+  }
+
+  const { isFeatured } = req.body as { isFeatured: boolean };
+  product.isFeatured = isFeatured;
+  await product.save();
+
+  res.json({ success: true, data: product });
+});
+
