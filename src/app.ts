@@ -102,7 +102,20 @@ app.get('/api/auth/sign-in/google', async (req, res) => {
     const webReq = buildAuthRequest(req, '/api/auth/sign-in/social', 'POST', socialBody);
     const response = await auth.handler(webReq);
 
+    const setCookieValues = typeof (response.headers as any).getSetCookie === 'function'
+      ? (response.headers as any).getSetCookie()
+      : undefined;
+
     response.headers.forEach((value, key) => {
+      if (key.toLowerCase() === 'set-cookie') {
+        if (setCookieValues && setCookieValues.length > 0) {
+          res.setHeader('set-cookie', setCookieValues);
+        } else {
+          res.setHeader('set-cookie', value);
+        }
+        return;
+      }
+
       res.setHeader(key, value);
     });
 
@@ -146,7 +159,20 @@ app.all(/\/api\/auth\/.*/, async (req, res) => {
   const webReq = buildAuthRequest(req, req.originalUrl, req.method, req.body);
   const response = await auth.handler(webReq);
 
+  const setCookieValues = typeof (response.headers as any).getSetCookie === 'function'
+    ? (response.headers as any).getSetCookie()
+    : undefined;
+
   response.headers.forEach((value, key) => {
+    if (key.toLowerCase() === 'set-cookie') {
+      if (setCookieValues && setCookieValues.length > 0) {
+        res.setHeader('set-cookie', setCookieValues);
+      } else {
+        res.setHeader('set-cookie', value);
+      }
+      return;
+    }
+
     res.setHeader(key, value);
   });
 
