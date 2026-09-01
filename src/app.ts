@@ -114,6 +114,7 @@ app.use('/api/auth', async (req, res, next) => {
 // set by the server-side flow (Set-Cookie on a navigational response).
 app.get('/api/auth/sign-in/google', async (req, res) => {
   try {
+    console.info('[AUTH][DEBUG] initiating /api/auth/sign-in/google', { url: req.originalUrl, query: req.query });
     const extractString = (val: unknown): string | undefined => {
       if (typeof val === 'string') return val;
       if (Array.isArray(val) && val.length && typeof val[0] === 'string') return val[0];
@@ -129,7 +130,24 @@ app.get('/api/auth/sign-in/google', async (req, res) => {
     if (callbackURL) socialBody.callbackURL = callbackURL;
 
     const webReq = buildAuthRequest(req, '/api/auth/sign-in/social', 'POST', socialBody);
+    console.info('[AUTH][DEBUG] sign-in/social request built', { method: webReq.method, url: webReq.url });
     const response = await auth.handler(webReq);
+
+    // Log response headers for debugging - especially Set-Cookie
+    try {
+      const headerObj: Record<string, any> = {};
+      response.headers.forEach((v, k) => {
+        const prev = headerObj[k];
+        if (prev) {
+          headerObj[k] = Array.isArray(prev) ? [...prev, v] : [prev, v];
+        } else {
+          headerObj[k] = v;
+        }
+      });
+      console.info('[AUTH][DEBUG] sign-in/social response headers', headerObj);
+    } catch (e) {
+      console.warn('[AUTH][DEBUG] failed to enumerate response headers', e);
+    }
 
     const setCookieValues = typeof (response.headers as any).getSetCookie === 'function'
       ? (response.headers as any).getSetCookie()
@@ -167,6 +185,24 @@ app.get('/api/auth/sign-in/google', async (req, res) => {
     console.error('[AUTH] sign-in/google error', err);
     res.status(500).send('Error initiating social sign-in');
   }
+});
+
+// Log incoming OAuth callbacks to inspect cookies/state
+app.use('/api/auth/callback', (req, res, next) => {
+  try {
+    console.info('[AUTH][DEBUG] incoming callback', {
+      path: req.path,
+      method: req.method,
+      query: req.query,
+      cookie: req.headers.cookie,
+      referer: req.headers.referer || req.headers.referrer,
+      x_forwarded_proto: req.headers['x-forwarded-proto'],
+      host: req.headers.host
+    });
+  } catch (e) {
+    console.warn('[AUTH][DEBUG] callback log failed', e);
+  }
+  next();
 });
 
 app.use('/api/auth', authHandler);
