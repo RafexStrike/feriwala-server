@@ -60,20 +60,19 @@ export const auth = betterAuth({
         defaultCookieAttributes: ENV.NODE_ENV === 'production' ? {
             sameSite: 'none',
         } : undefined,
-    },
-    // The OAuth state is set before navigating to Google and is returned on a
-    // top-level callback. Lax is sufficient for that flow and avoids relying
-    // on third-party-cookie behavior. Session cookies keep the global None
-    // setting above because the frontend calls the API cross-origin.
-    cookies: {
-        state: {
-            attributes: {
-                sameSite: 'lax',
+        // The OAuth state is set before navigating to Google and is returned
+        // on a top-level callback. Lax avoids relying on third-party-cookie
+        // behavior. Session cookies retain the global None setting above.
+        cookies: {
+            state: {
+                attributes: {
+                    sameSite: 'lax',
+                },
             },
-        },
-        oauth_state: {
-            attributes: {
-                sameSite: 'lax',
+            oauth_state: {
+                attributes: {
+                    sameSite: 'lax',
+                },
             },
         },
     },
