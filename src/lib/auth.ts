@@ -46,6 +46,13 @@ export const auth = betterAuth({
             await sendVerificationEmail({ user, url });
         },
     },
+    account: {
+        // The browser returns from Google to a different site (Render), and
+        // Firefox is not sending the short-lived state cookie on that
+        // callback. The state is still validated against the single-use,
+        // expiring verification record stored in MongoDB.
+        skipStateCookieCheck: true,
+    },
     user: {
         additionalFields: {
             role: {
