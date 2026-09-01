@@ -22,6 +22,40 @@ const findUserByEmail = async (email: string) => {
   });
 };
 
+const buildAuthRequest = (req: express.Request, url: string, method: string, body?: unknown) => {
+  const headers = new Headers();
+  Object.entries(req.headers).forEach(([key, value]) => {
+    if (value) {
+      if (Array.isArray(value)) {
+        value.forEach((entry) => headers.append(key, entry));
+      } else {
+        headers.set(key, value as string);
+      }
+    }
+  });
+
+  // Honor forwarded proto/host when behind proxies
+  const forwardedProto = req.headers['x-forwarded-proto'];
+  const protocol = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto as string | undefined;
+  const requestProtocol = req.secure || (protocol ? protocol.startsWith('https') : false) ? 'https' : 'http';
+
+  const forwardedHost = req.headers['x-forwarded-host'];
+  const hostValue = Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost as string | undefined;
+  const requestHost = hostValue || (req.headers.host as string | undefined) || '';
+
+  const hasBody = method !== 'GET' && method !== 'HEAD' && body !== undefined;
+  if (hasBody && !headers.has('content-type')) {
+    headers.set('content-type', 'application/json');
+  }
+
+  const fullUrl = `${requestProtocol}://${requestHost}${url}`;
+  return new Request(fullUrl, {
+    method,
+    headers,
+    body: hasBody ? JSON.stringify(body) : undefined,
+  });
+};
+
 const sendFreshVerificationEmail = async (email: string) => {
   const response = await fetch(new URL('/api/auth/send-verification-email', ENV.BETTER_AUTH_URL).toString(), {
     method: 'POST',
@@ -73,6 +107,66 @@ app.use('/api/auth', async (req, res, next) => {
   }
 
   next();
+});
+
+// Provide a simple browser-entry route for Google social sign-in so the
+// browser performs a top-level navigation and Better Auth's state cookie is
+// set by the server-side flow (Set-Cookie on a navigational response).
+app.get('/api/auth/sign-in/google', async (req, res) => {
+  try {
+    const extractString = (val: unknown): string | undefined => {
+      if (typeof val === 'string') return val;
+      if (Array.isArray(val) && val.length && typeof val[0] === 'string') return val[0];
+      return undefined;
+    };
+
+    const redirectParam = extractString(req.query.redirect);
+    const callbackURL = redirectParam
+      ? `${ENV.CLIENT_FRONTEND_URL.replace(/\/$/, '')}${redirectParam.startsWith('/') ? redirectParam : `/${redirectParam}`}`
+      : undefined;
+
+    const socialBody: any = { provider: 'google' };
+    if (callbackURL) socialBody.callbackURL = callbackURL;
+
+    const webReq = buildAuthRequest(req, '/api/auth/sign-in/social', 'POST', socialBody);
+    const response = await auth.handler(webReq);
+
+    const setCookieValues = typeof (response.headers as any).getSetCookie === 'function'
+      ? (response.headers as any).getSetCookie()
+      : undefined;
+
+    response.headers.forEach((value, key) => {
+      if (key.toLowerCase() === 'set-cookie') {
+        if (setCookieValues && setCookieValues.length > 0) {
+          res.setHeader('set-cookie', setCookieValues);
+        } else {
+          res.setHeader('set-cookie', value);
+        }
+        return;
+      }
+      res.setHeader(key, value);
+    });
+
+    const bodyText = await response.text();
+    let bodyJson: any = null;
+    try {
+      bodyJson = bodyText ? JSON.parse(bodyText) : null;
+    } catch {
+      bodyJson = null;
+    }
+
+    const locationHeader = response.headers.has('location') ? response.headers.get('location') : null;
+    const redirectUrl = locationHeader || (bodyJson && bodyJson.redirect && bodyJson.url ? bodyJson.url : null);
+
+    if (redirectUrl) {
+      return res.redirect(typeof redirectUrl === 'string' ? redirectUrl : String(redirectUrl));
+    }
+
+    res.status(response.status).send(bodyText);
+  } catch (err) {
+    console.error('[AUTH] sign-in/google error', err);
+    res.status(500).send('Error initiating social sign-in');
+  }
 });
 
 app.use('/api/auth', authHandler);
