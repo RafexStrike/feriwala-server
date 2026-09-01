@@ -17,13 +17,6 @@ const sendVerificationEmail = async ({ user, url }: { user: { email: string }; u
     console.info(`[AUTH] Verification email sent to ${user.email}`);
 };
 
-console.log('[BETTER AUTH INIT]', {
-    baseURL: ENV.BETTER_AUTH_URL,
-    NODE_ENV: ENV.NODE_ENV,
-    useSecureCookies: ENV.NODE_ENV === 'production',
-    googleConfigured: !!(ENV.GOOGLE_CLIENT_ID && ENV.GOOGLE_CLIENT_SECRET),
-});
-
 export const auth = betterAuth({
     baseURL: ENV.BETTER_AUTH_URL,
     database: mongodbAdapter(client.db()),
@@ -63,9 +56,6 @@ export const auth = betterAuth({
     },
     trustedOrigins: [ENV.CLIENT_FRONTEND_URL, ENV.ADMIN_FRONTEND_URL, ENV.BETTER_AUTH_URL].filter(Boolean),
     advanced: {
-        defaultCookieAttributes: ENV.NODE_ENV === 'production'
-            ? { sameSite: 'None', secure: true }
-            : { sameSite: 'Lax' },
         useSecureCookies: ENV.NODE_ENV === 'production',
     },
 });
