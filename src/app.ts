@@ -29,9 +29,11 @@ const buildAuthRequest = (req: express.Request, url: string, method: string, bod
     }
   });
 
+  // Properly extract protocol and host from forwarded headers
   const forwardedProto = req.headers['x-forwarded-proto'];
   const protocol = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto;
   const requestProtocol = req.secure || (protocol ? protocol.startsWith('https') : false) ? 'https' : 'http';
+  
   const forwardedHost = req.headers['x-forwarded-host'];
   const hostValue = Array.isArray(forwardedHost) ? forwardedHost[0] : forwardedHost;
   const requestHost = hostValue || req.headers.host;
@@ -41,7 +43,19 @@ const buildAuthRequest = (req: express.Request, url: string, method: string, bod
     headers.set('content-type', 'application/json');
   }
 
-  return new Request(`${requestProtocol}://${requestHost}${url}`, {
+  const fullUrl = `${requestProtocol}://${requestHost}${url}`;
+  
+  // Log OAuth callback requests for debugging
+  if (url.includes('/callback/')) {
+    console.log('[BUILD AUTH REQUEST] OAuth Callback', {
+      path: url,
+      protocol: requestProtocol,
+      host: requestHost,
+      fullUrl,
+    });
+  }
+
+  return new Request(fullUrl, {
     method,
     headers,
     body: hasBody ? JSON.stringify(body) : undefined,
@@ -86,6 +100,13 @@ app.get('/health', (_req, res) => {
 // Explicit route to initiate Google social sign-in using Better Auth programmatic API
 app.get('/api/auth/sign-in/google', async (req, res) => {
   try {
+    console.log('[GOOGLE SIGN-IN INITIATE]', {
+      host: req.headers.host,
+      xForwardedProto: req.headers['x-forwarded-proto'],
+      xForwardedHost: req.headers['x-forwarded-host'],
+      origin: req.headers.origin,
+    });
+
     const extractString = (val: unknown): string | undefined => {
       if (typeof val === 'string') return val;
       if (Array.isArray(val) && val.length && typeof val[0] === 'string') return val[0];
@@ -100,7 +121,20 @@ app.get('/api/auth/sign-in/google', async (req, res) => {
     if (callbackURL) socialBody.callbackURL = callbackURL;
 
     const webReq = buildAuthRequest(req, '/api/auth/sign-in/social', 'POST', socialBody);
+    console.log('[GOOGLE SOCIAL REQUEST]', {
+      url: webReq.url,
+      method: webReq.method,
+      callbackURL,
+    });
+
     const response = await auth.handler(webReq);
+    
+    console.log('[GOOGLE SOCIAL RESPONSE]', {
+      status: response.status,
+      hasLocation: response.headers.has('location'),
+      hasSetCookie: response.headers.has('set-cookie'),
+      setCookieCount: (response.headers as any).getSetCookie?.()?.length || 0,
+    });
 
     const setCookieValues = typeof (response.headers as any).getSetCookie === 'function'
       ? (response.headers as any).getSetCookie()
@@ -142,6 +176,36 @@ app.get('/api/auth/sign-in/google', async (req, res) => {
 });
 
 app.all(/\/api\/auth\/.*/, async (req, res) => {
+  // Diagnostic logging for auth requests
+  const isGoogleCallback = req.path === '/api/auth/callback/google';
+  const isGetSession = req.path === '/api/auth/get-session';
+  
+  if (isGoogleCallback) {
+    console.log('[GOOGLE CALLBACK]', {
+      path: req.path,
+      method: req.method,
+      origin: req.headers.origin,
+      host: req.headers.host,
+      xForwardedProto: req.headers['x-forwarded-proto'],
+      xForwardedHost: req.headers['x-forwarded-host'],
+      userAgent: req.headers['user-agent']?.substring(0, 50),
+    });
+  }
+
+  if (isGetSession) {
+    const cookieHeader = req.headers.cookie;
+    console.log('[GET-SESSION REQUEST]', {
+      path: req.path,
+      method: req.method,
+      origin: req.headers.origin,
+      host: req.headers.host,
+      xForwardedProto: req.headers['x-forwarded-proto'],
+      xForwardedHost: req.headers['x-forwarded-host'],
+      cookiePresent: !!cookieHeader,
+      cookieLength: cookieHeader?.length,
+    });
+  }
+
   if (req.path === '/api/auth/sign-in/email' && req.method === 'POST') {
     const email = typeof req.body?.email === 'string' ? req.body.email.trim().toLowerCase() : '';
     const userRecord = email ? await findUserByEmail(email) : null;
@@ -158,22 +222,38 @@ app.all(/\/api\/auth\/.*/, async (req, res) => {
 
   const webReq = buildAuthRequest(req, req.originalUrl, req.method, req.body);
   const response = await auth.handler(webReq);
+  
+  if (isGoogleCallback || isGetSession) {
+    console.log('[AUTH RESPONSE]', {
+      path: req.path,
+      status: response.status,
+      hasSetCookie: response.headers.has('set-cookie'),
+      setCookieCount: (response.headers as any).getSetCookie?.()?.length || 0,
+    });
+  }
 
+  // Handle Set-Cookie headers properly - must be done before other headers
+  // because we need to use getSetCookie() to get all values
   const setCookieValues = typeof (response.headers as any).getSetCookie === 'function'
     ? (response.headers as any).getSetCookie()
     : undefined;
 
-  response.headers.forEach((value, key) => {
-    if (key.toLowerCase() === 'set-cookie') {
-      if (setCookieValues && setCookieValues.length > 0) {
-        res.setHeader('set-cookie', setCookieValues);
-      } else {
-        res.setHeader('set-cookie', value);
-      }
-      return;
+  // Set all cookies first if they exist
+  if (setCookieValues && setCookieValues.length > 0) {
+    res.setHeader('set-cookie', setCookieValues);
+    if (isGoogleCallback) {
+      console.log('[SETTING COOKIES]', {
+        count: setCookieValues.length,
+        first: setCookieValues[0]?.substring(0, 80),
+      });
     }
+  }
 
-    res.setHeader(key, value);
+  // Forward other headers (excluding set-cookie which we already handled)
+  response.headers.forEach((value, key) => {
+    if (key.toLowerCase() !== 'set-cookie') {
+      res.setHeader(key, value);
+    }
   });
 
   const body = await response.text();

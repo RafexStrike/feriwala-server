@@ -17,6 +17,13 @@ const sendVerificationEmail = async ({ user, url }: { user: { email: string }; u
     console.info(`[AUTH] Verification email sent to ${user.email}`);
 };
 
+console.log('[BETTER AUTH INIT]', {
+    baseURL: ENV.BETTER_AUTH_URL,
+    NODE_ENV: ENV.NODE_ENV,
+    useSecureCookies: ENV.NODE_ENV === 'production',
+    googleConfigured: !!(ENV.GOOGLE_CLIENT_ID && ENV.GOOGLE_CLIENT_SECRET),
+});
+
 export const auth = betterAuth({
     baseURL: ENV.BETTER_AUTH_URL,
     database: mongodbAdapter(client.db()),
