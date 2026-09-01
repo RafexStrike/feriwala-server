@@ -57,5 +57,8 @@ export const auth = betterAuth({
     trustedOrigins: [ENV.CLIENT_FRONTEND_URL, ENV.ADMIN_FRONTEND_URL, ENV.BETTER_AUTH_URL].filter(Boolean),
     advanced: {
         useSecureCookies: ENV.NODE_ENV === 'production',
+        defaultCookieAttributes: ENV.NODE_ENV === 'production' ? {
+            sameSite: 'none',
+        } : undefined,
     },
 });
