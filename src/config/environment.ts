@@ -31,6 +31,9 @@ export const ENV = {
   ADMIN_EMAIL: process.env.ADMIN_EMAIL || '',
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || '',
   UPLOAD_DIR: process.env.UPLOAD_DIR?.trim() || 'uploads',
+  WEB_PUSH_PUBLIC_KEY: process.env.WEB_PUSH_PUBLIC_KEY?.trim() || '',
+  WEB_PUSH_PRIVATE_KEY: process.env.WEB_PUSH_PRIVATE_KEY?.trim() || '',
+  WEB_PUSH_SUBJECT: process.env.WEB_PUSH_SUBJECT?.trim() || '',
   // Optional Google OAuth credentials (not required for local development)
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID?.trim() || '',
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET?.trim() || '',

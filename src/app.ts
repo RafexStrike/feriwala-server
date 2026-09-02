@@ -9,6 +9,7 @@ import { CORS_ORIGINS, ENV } from './config/environment';
 import { httpLogger } from './config/logger';
 import { errorHandler, notFound } from './middleware/errorHandler';
 import { auth } from './lib/auth';
+import { getPushPublicKey } from './services/pushNotificationService';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -54,7 +55,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(`/${ENV.UPLOAD_DIR}`, express.static(path.join(process.cwd(), ENV.UPLOAD_DIR)));
 
 app.get('/health', (_req, res) => {
-  res.json({ success: true, message: 'OK' });
+  res.json({
+    success: true,
+    message: 'OK',
+    data: {
+      pushConfigured: Boolean(getPushPublicKey())
+    }
+  });
 });
 
 app.use('/api/auth', async (req, res, next) => {

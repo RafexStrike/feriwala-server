@@ -3,6 +3,7 @@ import { ApiError } from '../utils/ApiError';
 import { ProductModel } from '../models/Product';
 import { OrderModel, type IOrderItem, type OrderStatus, type OrderSource } from '../models/Order';
 import { notifyNewOrder } from './orderNotificationService';
+import { notifyAdminsOfNewOrderPush } from './pushNotificationService';
 
 export const ORDER_SOURCES: OrderSource[] = [
   'website',
@@ -150,6 +151,9 @@ export const createOrderRecord = async (input: OrderCreationInput) => {
 
     notifyNewOrder(createdOrder).catch((error) => {
       // Intentionally swallow error; notification failures shouldn't block order creation
+    });
+    notifyAdminsOfNewOrderPush(createdOrder).catch((error) => {
+      // Push delivery must stay isolated from checkout success.
     });
 
     return createdOrder;
